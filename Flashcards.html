@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بطاقات تعليمية يومية</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #121212;
+    color: #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    margin: 0;
+}
+
+/* زر الخروج */
+.exit-btn {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background:#007bff ;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    z-index: 999;
+}
+
+h1 {
+    color: #4db6ac;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.game-box {
+    background-color: #1e1e1e;
+    border: 2px solid #4db6ac;
+    border-radius: 15px;
+    padding: 20px;
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+}
+
+#counter {
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #4db6ac;
+}
+
+.flashcard {
+    background: #2c2c2c;
+    padding: 18px;
+    border-radius: 10px;
+    font-size: 18px;
+    color: #e0e0e0;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+}
+
+/* زر تحديث البطاقات */
+.refresh-btn {
+    background:#007bff ;
+    color:white;
+    border:none;
+    padding:8px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+.refresh-btn:hover {
+    background:#0056b3;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .flashcard { font-size:16px; padding:12px; }
+    .game-box { width:95%; padding:15px; }
+    h1 { font-size:22px; }
+    .exit-btn, .refresh-btn { font-size:13px; padding:6px 12px; }
+}
+</style>
+</head>
+<body>
+
+<button class="exit-btn" onclick="exitPage()">⬅ خروج</button>
+
+<h1>📘 بطاقات اليوم</h1>
+<div class="game-box">
+    <div id="counter">بطاقات اليوم: 1-10</div>
+    <div id="flashcards"></div>
+    <button class="refresh-btn" onclick="refreshFlashcards()">🔄 تحديث البطاقات</button>
+</div>
+
+<script>
+// زر الخروج
+function exitPage() {
+    window.history.back();
+}
+
+// قائمة كبيرة من الكلمات والمعاني (أكثر من 100)
+const allFlashcards = [
+  {word:"Apple", meaning:"تفاحة"}, {word:"House", meaning:"بيت"}, {word:"Book", meaning:"كتاب"},
+  {word:"School", meaning:"مدرسة"}, {word:"Water", meaning:"ماء"}, {word:"Computer", meaning:"حاسوب"},
+  {word:"Teacher", meaning:"معلم"}, {word:"Friend", meaning:"صديق"}, {word:"Car", meaning:"سيارة"},
+  {word:"Sun", meaning:"شمس"}, {word:"Moon", meaning:"قمر"}, {word:"Star", meaning:"نجمة"},
+  {word:"Tree", meaning:"شجرة"}, {word:"Flower", meaning:"زهرة"}, {word:"River", meaning:"نهر"},
+  {word:"Mountain", meaning:"جبل"}, {word:"Ocean", meaning:"محيط"}, {word:"Rain", meaning:"مطر"},
+  {word:"Snow", meaning:"ثلج"}, {word:"Wind", meaning:"رياح"}, {word:"Fire", meaning:"نار"},
+  {word:"Earth", meaning:"أرض"}, {word:"Sky", meaning:"سماء"}, {word:"Heart", meaning:"قلب"},
+  {word:"Mind", meaning:"عقل"}, {word:"Music", meaning:"موسيقى"}, {word:"Love", meaning:"حب"},
+  {word:"Peace", meaning:"سلام"}, {word:"Joy", meaning:"فرح"}, {word:"Strength", meaning:"قوة"},
+  {word:"Courage", meaning:"شجاعة"}, {word:"Wisdom", meaning:"حكمة"}, {word:"Dream", meaning:"حلم"},
+  {word:"Hope", meaning:"أمل"}, {word:"Light", meaning:"ضوء"}, {word:"Shadow", meaning:"ظل"},
+  {word:"Time", meaning:"وقت"}, {word:"Life", meaning:"حياة"}, {word:"Death", meaning:"موت"},
+  {word:"Victory", meaning:"انتصار"}, {word:"Defeat", meaning:"هزيمة"}, {word:"Journey", meaning:"رحلة"},
+  {word:"Adventure", meaning:"مغامرة"}, {word:"Knowledge", meaning:"معرفة"}, {word:"Freedom", meaning:"حرية"},
+  {word:"Justice", meaning:"عدالة"}, {word:"Truth", meaning:"حقيقة"}, {word:"Beauty", meaning:"جمال"},
+  {word:"Art", meaning:"فن"}, {word:"Language", meaning:"لغة"}, {word:"Culture", meaning:"ثقافة"},
+  {word:"History", meaning:"تاريخ"}, {word:"Future", meaning:"مستقبل"}, {word:"Present", meaning:"حاضر"},
+  {word:"Success", meaning:"نجاح"}, {word:"Failure", meaning:"فشل"}, {word:"Friendship", meaning:"صداقة"},
+  {word:"Family", meaning:"عائلة"}, {word:"Community", meaning:"مجتمع"}, {word:"Environment", meaning:"بيئة"},
+  {word:"Nature", meaning:"طبيعة"}, {word:"Animal", meaning:"حيوان"}, {word:"Bird", meaning:"طائر"},
+  {word:"Fish", meaning:"سمكة"}, {word:"Insect", meaning:"حشرة"}, {word:"Plant", meaning:"نبات"},
+  {word:"Food", meaning:"طعام"}, {word:"Drink", meaning:"شراب"}, {word:"Clothing", meaning:"ملابس"},
+  {word:"Movie", meaning:"فيلم"}, {word:"Game", meaning:"لعبة"}, {word:"Sport", meaning:"رياضة"},
+  {word:"Health", meaning:"صحة"}, {word:"Medicine", meaning:"طب"}, {word:"Technology", meaning:"تكنولوجيا"},
+  {word:"Science", meaning:"علم"}, {word:"Math", meaning:"رياضيات"}, {word:"Physics", meaning:"فيزياء"},
+  {word:"Chemistry", meaning:"كيمياء"}, {word:"Biology", meaning:"أحياء"}, {word:"Geography", meaning:"جغرافيا"},
+  {word:"Politics", meaning:"سياسة"}, {word:"Economics", meaning:"اقتصاد"}, {word:"Religion", meaning:"دين"},
+  {word:"Philosophy", meaning:"فلسفة"}, {word:"Literature", meaning:"أدب"}, {word:"Poetry", meaning:"شعر"},
+  {word:"Theater", meaning:"مسرح"}, {word:"Dance", meaning:"رقص"}, {word:"Painting", meaning:"رسم"},
+  {word:"Sculpture", meaning:"تمثال"}, {word:"Photography", meaning:"تصوير"}, {word:"Travel", meaning:"سفر"},
+  {word:"Holiday", meaning:"عطلة"}, {word:"Festival", meaning:"مهرجان"}, {word:"Tradition", meaning:"تقليد"},
+  {word:"Custom", meaning:"عادات"}, {word:"Celebration", meaning:"احتفال"}, {word:"Event", meaning:"حدث"},
+  {word:"Meeting", meaning:"اجتماع"}, {word:"Conversation", meaning:"محادثة"}, {word:"Message", meaning:"رسالة"},
+  {word:"Email", meaning:"بريد إلكتروني"}, {word:"Call", meaning:"مكالمة"}, {word:"Chat", meaning:"دردشة"},
+  {word:"Social", meaning:"اجتماعي"}, {word:"Network", meaning:"شبكة"}, {word:"Internet", meaning:"إنترنت"}
+];
+
+// دالة لاختيار 10 بطاقات يومية ثابتة حسب اليوم
+function getDailyFlashcards() {
+    const today = new Date().toDateString(); // اليوم الحالي كـ "Mon Jan 09 2026"
+    let dailyCards = [];
+
+    // تحقق إذا كانت هناك بيانات مخزنة لليوم
+    const storedDay = localStorage.getItem("flashcardsDay");
+    const storedCards = localStorage.getItem("flashcardsToday");
+
+    if(storedDay === today && storedCards){
+        // استخدم نفس البطاقات المحفوظة
+        dailyCards = JSON.parse(storedCards);
+    } else {
+        // اختر 10 بطاقات عشوائية جديدة
+        const shuffled = allFlashcards.sort(() => 0.5 - Math.random());
+        dailyCards = shuffled.slice(0,10);
+
+        // احفظ اليوم والبطاقات في LocalStorage
+        localStorage.setItem("flashcardsDay", today);
+        localStorage.setItem("flashcardsToday", JSON.stringify(dailyCards));
+    }
+
+    return dailyCards;
+}
+
+// عرض البطاقات
+function showFlashcards() {
+    const dailyCards = getDailyFlashcards();
+    const flashcardsDiv = document.getElementById("flashcards");
+    flashcardsDiv.innerHTML = '';
+
+    dailyCards.forEach((card, index) => {
+        const cardDiv = document.createElement("div");
+        cardDiv.className = "flashcard";
+        cardDiv.innerHTML = `<strong>${index+1}. ${card.word}</strong><br><span>${card.meaning}</span>`;
+        flashcardsDiv.appendChild(cardDiv);
+    });
+
+    document.getElementById("counter").textContent = `بطاقات اليوم: 1-${dailyCards.length}`;
+}
+
+// زر تحديث البطاقات في نفس اليوم
+function refreshFlashcards() {
+    // مسح البطاقات القديمة من LocalStorage
+    localStorage.removeItem("flashcardsToday");
+    showFlashcards();
+}
+
+// عرض البطاقات عند تحميل الصفحة
+showFlashcards();
+</script>
+
+</body>
+</html>

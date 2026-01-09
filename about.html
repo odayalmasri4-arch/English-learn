@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Learn English From Home</title>
+
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+    integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+  <link rel="stylesheet" href="about.css">
+  <link rel="stylesheet" href="learn.css">
+  <link rel="stylesheet" href="grade6.css">
+
+ 
+  <link rel="icon" href="log2.png" />
+
+
+  <style>
+    .about-me-card {
+      background-color: #1e3a8a; 
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      max-width: 500px;
+      margin: 30px auto;
+      text-align: center;
+      font-family: 'Arial', sans-serif;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .about-me-card h2 {
+      font-size: 30px; 
+      margin-bottom: 10px;
+      font-family: 'Verdana', sans-serif;
+    }
+
+    .about-me-card p {
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .about-me-card a {
+      display: inline-block;
+      margin-top: 15px;
+      text-decoration: none;
+      font-weight: bold;
+      padding: 12px 20px;
+      border-radius: 10px;
+      color: white;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .about-me-card a:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .cv-btn {
+      background-color: #10b981;
+      margin-right: 5px;
+    }
+
+    .fb-btn {
+      background-color: #3b5998; 
+      margin-left: 5px;
+    }
+
+    .about-me-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+
+    
+  <nav>
+    <i class="fa-solid fa-e logo"></i>
+    <ul class="nav-items">
+      <li><a href="index.html">الصفحة الرئيسية</a></li>
+      <li><a href="about.html">معلومات عنا</a></li>
+    </ul>
+    <form action="Flashcards.html">
+
+    </form>
+    <i id="mobile-toggle" class="fa-solid fa-bars"></i>
+  </nav>
+
+   
+    <div class="site-container">
+
+      
+      <div class="about-me-card">
+        <h2>oday Almasri </h2>
+        <p>مطور هذا التطبيق لتعليم اللغة الإنجليزية بطريقة ممتعة وتفاعلية من المنزل.</p>
+
+        
+        <a href="https://odayalmasri4-arch.github.io/oday.cv-2/" target="_blank" class="cv-btn">
+          <i class="fa-solid fa-file-lines"></i> تصفح سيرتي الذاتية
+        </a>
+
+        
+        <a href="https://www.facebook.com/share/15TKEWc9U4/" target="_blank" class="fb-btn">
+          <i class="fa-brands fa-facebook"></i> تابعنا على فيسبوك
+        </a>
+      </div>
+
+    <script>
+      const mobileToggle = document.getElementById("mobile-toggle");
+      mobileToggle.addEventListener("click", function () {
+        document.querySelector(".nav-items").classList.toggle("active");
+      });
+    </script>
+
+  </main>
+</body>
+</html>

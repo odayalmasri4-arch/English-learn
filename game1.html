@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learn English From Home</title>
+
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      direction: rtl;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #1e3a8a;
+    }
+
+    /* زر الرجوع */
+    .back-btn {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background-color: #1e3a8a;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      z-index: 999;
+    }
+
+    .game-container {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      max-width: 750px;
+      width: 100%;
+      display: flex;
+      gap: 20px;
+    }
+
+    .left-side {
+      width: 70%;
+    }
+
+    .right-side {
+      width: 30%;
+      text-align: center;
+      border-right: 2px solid #ddd;
+      padding-right: 15px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .question {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .options button {
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+
+    .options button:disabled {
+      background: #aaa;
+    }
+
+    .next-btn,
+    .retry-btn {
+      display: none;
+      margin-top: 15px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: #28a745;
+      color: white;
+      cursor: pointer;
+    }
+
+    .show {
+      display: inline-block;
+    }
+
+    .progress-container {
+      width: 100%;
+      height: 10px;
+      background: #ddd;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: #28a745;
+      width: 0%;
+      transition: width 0.4s;
+    }
+
+    .start-container {
+      text-align: center;
+    }
+
+    .start-container input {
+      padding: 10px;
+      width: 80%;
+      font-size: 16px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .start-container button {
+      padding: 10px 20px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* الجوال */
+    @media (max-width: 768px) {
+      body {
+        height: auto;
+        padding: 10px;
+      }
+
+      .game-container {
+        flex-direction: column;
+      }
+
+      .left-side,
+      .right-side {
+        width: 100%;
+        border: none;
+      }
+
+      .right-side {
+        border-top: 2px solid #ddd;
+        padding-top: 10px;
+      }
+
+      .question {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<button class="back-btn" onclick="goBack()">⬅ رجوع</button>
+
+<div class="game-container">
+  <div class="left-side">
+
+    <div class="start-container" id="start-container">
+      <h1>لعبة تعلم اللغة الإنجليزية</h1>
+      <p>أدخل اسمك للبدء</p>
+      <input type="text" id="name-input" placeholder="اسمك">
+      <button onclick="startGame()">ابدأ</button>
+    </div>
+
+    <div id="game" style="display:none;">
+      <div class="progress-container">
+        <div class="progress-bar" id="progress"></div>
+      </div>
+
+      <div class="question" id="question"></div>
+      <div class="options" id="options"></div>
+      <div id="result"></div>
+
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">التالي</button>
+      <button class="retry-btn" id="retryBtn" onclick="location.reload()">إعادة</button>
+    </div>
+
+  </div>
+
+  <div class="right-side">
+    <p id="player-name">الاسم: -</p>
+    <p id="score">النقاط: 0</p>
+  </div>
+</div>
+
+<audio id="correct" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_0abbe7ad49.mp3"></audio>
+<audio id="wrong" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_9ebc8f5a90.mp3"></audio>
+
+<script>
+  function goBack() {
+    window.history.back();
+  }
+
+  const questions = [
+    {q:"She ___ to school.", o:["go","goes","went"], a:"goes"},
+    {q:"They ___ football.", o:["play","plays","played"], a:"play"},
+    {q:"I ___ a movie yesterday.", o:["watch","watched","watching"], a:"watched"}
+  ];
+
+  let index = 0;
+  let score = 0;
+  let name = "";
+
+  function startGame() {
+    name = document.getElementById("name-input").value;
+    if(name==="") return alert("أدخل الاسم");
+    document.getElementById("player-name").innerText = "الاسم: " + name;
+    document.getElementById("start-container").style.display="none";
+    document.getElementById("game").style.display="block";
+    loadQuestion();
+  }
+
+  function loadQuestion() {
+    if(index >= questions.length) {
+      document.getElementById("question").innerText = "انتهت اللعبة 🎉";
+      document.getElementById("retryBtn").classList.add("show");
+      return;
+    }
+
+    const q = questions[index];
+    document.getElementById("question").innerText = q.q;
+    const options = document.getElementById("options");
+    options.innerHTML = "";
+
+    q.o.forEach(opt=>{
+      const b = document.createElement("button");
+      b.innerText = opt;
+      b.onclick = ()=>check(opt);
+      options.appendChild(b);
+    });
+
+    document.getElementById("progress").style.width =
+      ((index)/questions.length*100)+"%";
+  }
+
+  function check(ans) {
+    const q = questions[index];
+    if(ans === q.a) {
+      score++;
+      document.getElementById("correct").play();
+    } else {
+      document.getElementById("wrong").play();
+    }
+    document.getElementById("score").innerText = "النقاط: " + score;
+    index++;
+    loadQuestion();
+  }
+
+  function nextQuestion() {
+    loadQuestion();
+  }
+</script>
+
+</body>
+</html>
